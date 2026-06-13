@@ -14,18 +14,18 @@ Design notes (industry-standard mapping):
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class PricingModel(str, Enum):
+class PricingModel(StrEnum):
     PER_SEAT = "per_seat"
     FLAT = "flat"
     USAGE = "usage"
     TIERED = "tiered"
 
 
-class IncentiveType(str, Enum):
+class IncentiveType(StrEnum):
     VOLUME_REBATE = "volume_rebate"
     MDF = "mdf"  # Market Development Funds (marketing co-fund)
     CO_SELL = "co_sell"  # cross-vendor / partner co-sell discount
