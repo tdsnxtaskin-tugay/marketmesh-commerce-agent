@@ -152,6 +152,12 @@ packaging.)
 A ≤5-minute storyboard is in [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md). The headline
 moment: **register a brand-new vendor mid-demo and watch the deal instantly re-optimise.**
 
+## 📨 Submitting
+
+A single consolidated, copy-paste-ready submission guide for all three tracks (plus the
+author's other Agents League entries) is in [`SUBMISSION.md`](SUBMISSION.md). Per-track
+detail and the compliance checklist live in [`submissions/`](submissions/).
+
 ## 📁 Repo layout
 
 ```
