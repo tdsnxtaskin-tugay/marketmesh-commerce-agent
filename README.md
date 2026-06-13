@@ -33,7 +33,7 @@ optimisation — then the agent solves the hard multi-vendor buying problem for 
 1. **Register any vendor live** — a public brand or a company invented 10 seconds ago.
 2. **Search & configure** products across all vendors (CPQ: tiers, terms, seats, add-ons).
 3. **Decompose a need into capabilities** and find every candidate SKU (product ontology).
-4. **Assemble the cheapest covering set** across vendors, removing overlap/redundancy.
+4. **Assemble a cost-optimised covering set** across vendors, minimising redundant SKUs.
 5. **Apply marketing / co-sell / volume incentives** — including **cross-vendor co-sell
    advantages** — and show the savings vs a naive one-product-per-capability baseline.
 6. **Ground every choice** in retrieved, cited product knowledge.
@@ -114,7 +114,7 @@ Foundry IQ / Work IQ. Nothing is required — each integration activates indepen
 
 ```
 Work IQ intent → capability decomposition (Fabric IQ) → candidate SKUs across vendors
-→ weighted set-cover (cheapest covering set, overlap removed) → CPQ configure & price
+→ greedy cost-minimising covering set (redundant SKUs avoided) → CPQ configure & price
 → marketing / co-sell / volume incentives → savings vs naive baseline
 → Foundry IQ grounded validation (cited) → human approval → idempotent DRY_RUN checkout
 → replay proves no double charge

@@ -21,6 +21,7 @@ from .catalog import Catalog
 from .commerce import CommerceEngine, Order
 from .config import Settings, load_settings
 from .deal_optimizer import DealResult, optimize_deal
+from .guardrails import GuardrailError
 from .iq.fabric_iq import FabricIQGraph
 from .iq.foundry_iq import FoundryIQRetriever, GroundedAnswer
 from .iq.work_iq import BuyerContext, WorkIQProvider
@@ -184,6 +185,10 @@ class MarketMesh:
     ) -> tuple[Order, Order]:
         ctx = outcome.buyer_context
         quote = outcome.deal.quote
+        if not quote.lines:
+            raise GuardrailError(
+                "Nothing to purchase — the deal has no products (capabilities uncovered)."
+            )
         approver = approver or ctx.approver or "approver@example.com"
         justification = justification or (
             f"Right-sized, capability-complete deal for {outcome.need.department}."

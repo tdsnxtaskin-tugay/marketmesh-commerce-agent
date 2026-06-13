@@ -36,7 +36,7 @@ sequenceDiagram
     WIQ-->>Agent: 200 seats, renewal, $50k approval policy, budget
     Agent->>FAB: Decompose need → capabilities → candidate SKUs (all vendors)
     FAB-->>Agent: Providers per capability + cross-vendor alternatives
-    Note over Agent: Weighted set-cover → cheapest covering set, overlap removed
+    Note over Agent: Greedy cost-minimising set cover → redundant SKUs avoided
     Agent->>Agent: CPQ configure & price each line
     Agent->>Agent: Apply marketing / co-sell / volume incentives
     Agent->>FND: Validate each SKU delivers its capability

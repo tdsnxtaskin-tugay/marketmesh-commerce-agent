@@ -274,6 +274,7 @@ class QuoteLine:
     add_on_ids: list[str]
     list_annual_usd: float
     capabilities: list[str] = field(default_factory=list)
+    category_code: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -286,6 +287,7 @@ class QuoteLine:
             "add_on_ids": list(self.add_on_ids),
             "list_annual_usd": round(self.list_annual_usd, 2),
             "capabilities": list(self.capabilities),
+            "category_code": self.category_code,
         }
 
 

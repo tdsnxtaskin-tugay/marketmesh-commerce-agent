@@ -18,20 +18,34 @@ class ComplianceAgent(Agent):
         mission.policy_issues = []
         quote = mission.deal.quote
         net = quote.net_total_annual_usd
+        covered = quote.covered_capabilities()
 
-        # 1) Replannable gate: required capabilities that no vendor covers.
-        if mission.deal.uncovered_capabilities:
-            for cap in mission.deal.uncovered_capabilities:
+        # 1) Uncovered required capabilities. A *mandatory* capability that cannot be
+        #    covered is BLOCKING (it must never be quietly dropped during replan); other
+        #    uncovered capabilities are replannable.
+        for cap in mission.deal.uncovered_capabilities:
+            if cap == MANDATORY_CAPABILITY:
+                mission.policy_issues.append(
+                    f"block:mandatory capability '{cap}' cannot be covered by any vendor"
+                )
+            else:
                 mission.policy_issues.append(f"uncovered:{cap}")
 
-        # 2) Policy gate: mandatory identity/SSO when requested.
-        covered = quote.covered_capabilities()
-        if MANDATORY_CAPABILITY in mission.need.required_capabilities and (
-            MANDATORY_CAPABILITY not in covered
+        # 2) Policy gate: mandatory identity/SSO must be covered when requested (blocking).
+        if (
+            MANDATORY_CAPABILITY in mission.need.required_capabilities
+            and MANDATORY_CAPABILITY not in covered
+            and not any(i.startswith("block:mandatory") for i in mission.policy_issues)
         ):
-            mission.policy_issues.append("missing:identity")
+            mission.policy_issues.append(
+                f"block:mandatory capability '{MANDATORY_CAPABILITY}' not covered"
+            )
 
-        # 3) Hard guardrails: spend cap + budget (blocking).
+        # 3) Nothing to buy → never place an empty order.
+        if not quote.lines:
+            mission.policy_issues.append("block:no products selected for this need")
+
+        # 4) Hard guardrails: spend cap + budget (blocking).
         try:
             guardrails.check_spend_cap(net, mm.settings.commerce.max_transaction_usd)
         except guardrails.GuardrailError as exc:

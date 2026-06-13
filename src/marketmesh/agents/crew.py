@@ -15,11 +15,11 @@ MAX_REPLANS = 1
 
 
 def _replannable(issues: list[str]) -> list[str]:
+    # Only non-mandatory uncovered capabilities may be dropped and retried. Mandatory
+    # gaps are emitted as `block:` issues by ComplianceAgent and are never droppable.
     caps = []
     for issue in issues:
         if issue.startswith("uncovered:"):
-            caps.append(issue.split(":", 1)[1])
-        if issue.startswith("missing:"):
             caps.append(issue.split(":", 1)[1])
     return caps
 

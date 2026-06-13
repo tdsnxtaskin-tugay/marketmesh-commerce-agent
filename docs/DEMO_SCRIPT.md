@@ -31,8 +31,8 @@ Run everything with: `python scripts/run_demo.py` (and `--mode crew` for the cre
 - Walk the quote table: a multi-vendor deal across Adobe, Cisco, Microsoft, NovaForge,
   Lumino — each line covering specific capabilities.
 > "Fabric IQ's product graph decomposed the need into capabilities and found candidates
-> across every vendor. A weighted set-cover picked the cheapest covering set and removed
-> overlap."
+> across every vendor. A greedy cost-minimising set cover picked the covering set and
+> avoided redundant SKUs."
 
 **2:50 — Incentives & savings (40s)**
 > "Then it layered marketing incentives — a volume rebate, MDF co-marketing credit, and a

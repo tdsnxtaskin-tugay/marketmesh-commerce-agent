@@ -86,4 +86,5 @@ def configure(sku: Sku, item: ConfiguredItem, vendor_name: str) -> QuoteLine:
         add_on_ids=list(item.add_on_ids),
         list_annual_usd=price_annual(sku, item),
         capabilities=sorted(set(capabilities)),
+        category_code=sku.category_code,
     )

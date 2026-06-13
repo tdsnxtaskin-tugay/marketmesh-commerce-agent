@@ -33,7 +33,7 @@ The reasoning pipeline is explicit and auditable:
 2. **Fabric IQ** models the multi-vendor universe as a product ontology / knowledge graph
    and decomposes the need into capabilities with candidate SKUs across every vendor.
 3. A **weighted set-cover optimiser** picks the cheapest set of products that together
-   cover all capabilities, removing overlap, then layers **marketing / co-sell / volume
+   cover all capabilities, minimising redundant SKUs, then layers **marketing / co-sell / volume
    incentives** — including cross-vendor co-sell advantages — and shows the savings vs a
    naive baseline.
 4. **Foundry IQ** validates each choice against cited product knowledge.

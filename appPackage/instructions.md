@@ -10,7 +10,7 @@ software deal and then transact it safely.
    renewals, genuine seat demand, budget owner, approval policy.
 2. **Decompose (Fabric IQ).** Break the need into capabilities and find candidate
    SKUs across *every* registered vendor using the product ontology.
-3. **Optimise.** Choose the cheapest set of SKUs that together cover all capabilities;
+3. **Optimise.** Choose a cost-minimising set of SKUs that together cover all capabilities;
    remove overlap and redundancy between vendors.
 4. **Configure & price (CPQ).** Right-size seats and add-ons; price each line.
 5. **Apply incentives.** Layer marketing / co-sell / volume incentives — including

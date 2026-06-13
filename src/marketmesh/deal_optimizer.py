@@ -4,11 +4,19 @@ Given a business need (a set of required capabilities + seats + term), it:
 
   1. Decomposes the need into capabilities (Fabric IQ ontology).
   2. Finds candidate SKUs per capability across every registered vendor.
-  3. Solves a weighted set-cover: the cheapest set of SKUs that together cover all
-     capabilities — preferring multi-capability SKUs and removing overlap/redundancy.
+  3. Runs a **greedy, cost-minimising set cover**: it repeatedly picks the SKU that
+     covers the most still-needed capabilities per dollar, until everything coverable is
+     covered. This is a fast approximation (not a guaranteed-optimal exact cover) that
+     favours multi-capability SKUs and avoids selecting SKUs that add no new coverage.
   4. Configures + prices each chosen SKU (CPQ).
-  5. Applies marketing / co-sell / volume incentives (cross-vendor "deal advantage").
-  6. Reports savings vs a naive one-SKU-per-capability baseline.
+  5. Applies marketing / co-sell / volume incentives **after** selection (a common CPQ
+     pattern). Note this means selection minimises *list* price; incentive-aware global
+     optimisation is a documented extension.
+  6. Reports the delta vs a naive one-SKU-per-capability baseline.
+
+A SKU is only considered for a capability if it can serve the requested seat count
+(``need.seats <= sku.max_seats``); capabilities that cannot be assigned are reported as
+uncovered rather than silently under-provisioned.
 
 Pure and deterministic, so the rationale is fully auditable.
 """
@@ -70,11 +78,21 @@ class DealResult:
 
 
 def _seats_for(sku: Sku, need: BusinessNeed) -> int:
-    return min(max(need.seats, sku.min_seats), sku.max_seats)
+    # Clamp up to the SKU minimum (you must buy at least the minimum), but never
+    # clamp *down*: a SKU that cannot serve the requested seats is rejected as a
+    # candidate (see _candidate_for) rather than silently under-provisioning.
+    return max(need.seats, sku.min_seats)
 
 
 def _candidate_for(sku: Sku, needed: set[str], need: BusinessNeed) -> Candidate | None:
-    """Build the cheapest configuration of ``sku`` that covers some of ``needed``."""
+    """Build the cheapest configuration of ``sku`` that covers some of ``needed``.
+
+    Returns ``None`` when the SKU cannot genuinely serve the need — either it covers
+    none of the needed capabilities, or its seat ceiling is below the requested seats
+    (we never quietly buy fewer seats than the buyer asked for).
+    """
+    if need.seats > sku.max_seats:
+        return None
     base_cover = set(sku.capabilities) & needed
     chosen_addons: list[str] = []
     addon_cover: set[str] = set()
@@ -93,7 +111,10 @@ def _candidate_for(sku: Sku, needed: set[str], need: BusinessNeed) -> Candidate 
         term_months=need.term_months,
         add_on_ids=chosen_addons,
     )
-    return Candidate(sku=sku, item=item, covers=covers, cost_annual=price_annual(sku, item))
+    cost = price_annual(sku, item)
+    if cost < 0:  # defensive: prices must be non-negative
+        return None
+    return Candidate(sku=sku, item=item, covers=covers, cost_annual=cost)
 
 
 def _naive_baseline(catalog: Catalog, need: BusinessNeed, required: set[str]) -> float:
@@ -122,14 +143,16 @@ def optimize_deal(
         f"Decomposed need into {len(required)} capabilities: {', '.join(sorted(required))}."
     )
 
-    uncovered_all = fabric.uncovered(sorted(required))
-    coverable = required - set(uncovered_all)
+    uncovered_all = set(fabric.uncovered(sorted(required)))
+    coverable = required - uncovered_all
     if uncovered_all:
         steps.append(
             "No registered vendor covers: " + ", ".join(sorted(uncovered_all)) + "."
         )
 
-    # ── greedy weighted set cover over all vendors' SKUs ──
+    # ── greedy cost-minimising set cover over all vendors' SKUs ──
+    # (a greedy approximation, not a guaranteed-optimal exact cover; it prefers SKUs
+    #  that cover the most new capabilities per dollar.)
     remaining = set(coverable)
     chosen: list[Candidate] = []
     chosen_sku_ids: set[str] = set()
@@ -145,7 +168,8 @@ def optimize_deal(
             new_cover = cand.covers & remaining
             if not new_cover:
                 continue
-            ratio = len(new_cover) / (cand.cost_annual + 1.0)
+            # Capabilities-per-dollar; a free SKU is infinitely attractive.
+            ratio = float("inf") if cand.cost_annual == 0 else len(new_cover) / cand.cost_annual
             if ratio > best_ratio or (
                 ratio == best_ratio and best and cand.cost_annual < best.cost_annual
             ):
@@ -159,6 +183,14 @@ def optimize_deal(
         steps.append(
             f"Selected {best.sku.name} ({catalog.vendor_name(best.sku.vendor_id)}) "
             f"covering {', '.join(sorted(newly))} at ${best.cost_annual:,.0f}/yr."
+        )
+
+    # Any capability we could not actually assign (e.g. only available on a SKU whose
+    # seat ceiling is too low) is reported as uncovered — never silently hidden.
+    if remaining:
+        uncovered_all |= remaining
+        steps.append(
+            "Could not assemble coverage for: " + ", ".join(sorted(remaining)) + "."
         )
 
     # ── build the quote ──
@@ -176,14 +208,15 @@ def optimize_deal(
                 add_on_ids=list(cand.item.add_on_ids),
                 list_annual_usd=cand.cost_annual,
                 capabilities=caps,
+                category_code=cand.sku.category_code,
             )
         )
 
     vendors_in_deal = {line.vendor_id for line in quote.lines}
     if len(vendors_in_deal) > 1:
         steps.append(
-            f"Assembled a {len(vendors_in_deal)}-vendor solution and removed overlapping "
-            "coverage between vendors."
+            f"Assembled a {len(vendors_in_deal)}-vendor solution, minimising redundant "
+            "SKU selection across vendors."
         )
 
     # ── incentives ──
@@ -234,10 +267,19 @@ def _incentive_applies(inc: Incentive, quote: Quote) -> bool:
 
 
 def _vendor_applicable_subtotal(inc: Incentive, quote: Quote) -> tuple[float, int]:
+    """Subtotal + max seats of the lines an incentive actually applies to.
+
+    Restricted to the incentive's vendor and, when ``applies_to_categories`` is set,
+    to lines whose SKU category code is in that list — so a category-scoped incentive
+    never discounts (or unlocks its threshold from) unrelated spend.
+    """
+    categories = set(inc.applies_to_categories)
     subtotal = 0.0
     seats = 0
     for line in quote.lines:
         if line.vendor_id != inc.vendor_id:
+            continue
+        if categories and line.category_code not in categories:
             continue
         subtotal += line.list_annual_usd
         seats = max(seats, line.seats)
@@ -245,10 +287,18 @@ def _vendor_applicable_subtotal(inc: Incentive, quote: Quote) -> tuple[float, in
 
 
 def apply_incentives(quote: Quote, registry: VendorRegistry) -> list[AppliedIncentive]:
-    """Apply qualifying incentives, capping cumulative discount per vendor."""
+    """Apply qualifying incentives, capping cumulative discount per vendor.
+
+    Incentives are evaluated in a deterministic order — largest discount first, then by
+    id — so that when the per-vendor cap binds, the most valuable incentive is credited
+    first and the outcome does not depend on registration order.
+    """
     applied: list[AppliedIncentive] = []
     vendor_discounted: dict[str, float] = {}
-    for inc in registry.all_incentives():
+    incentives = sorted(
+        registry.all_incentives(), key=lambda i: (-i.discount_pct, i.vendor_id, i.id)
+    )
+    for inc in incentives:
         if not _incentive_applies(inc, quote):
             continue
         subtotal, seats = _vendor_applicable_subtotal(inc, quote)
