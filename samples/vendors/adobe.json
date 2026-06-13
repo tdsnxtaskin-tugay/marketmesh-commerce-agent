@@ -1,0 +1,57 @@
+{
+  "id": "adobe",
+  "name": "Adobe",
+  "is_real_brand": true,
+  "disclaimer": "Illustrative demo data only — not official Adobe pricing, specifications, or an endorsement.",
+  "products": [
+    {
+      "id": "adobe-creative",
+      "vendor_id": "adobe",
+      "name": "Creative Suite (illustrative)",
+      "family": "Creative",
+      "category_code": "43232107",
+      "pricing_model": "per_seat",
+      "unit_price_monthly": 55.0,
+      "min_seats": 1,
+      "max_seats": 100000,
+      "term_months": 12,
+      "capabilities": ["design", "video_edit"],
+      "add_ons": [
+        {"id": "asset-library", "name": "Asset Library", "unit_price_monthly": 12.0, "capabilities": []}
+      ],
+      "keywords": ["photoshop", "illustrator", "creative", "design", "video"]
+    },
+    {
+      "id": "adobe-doc",
+      "vendor_id": "adobe",
+      "name": "Document Cloud (illustrative)",
+      "family": "Documents",
+      "category_code": "43232104",
+      "pricing_model": "per_seat",
+      "unit_price_monthly": 25.0,
+      "min_seats": 1,
+      "max_seats": 100000,
+      "term_months": 12,
+      "capabilities": ["pdf"],
+      "add_ons": [
+        {"id": "esign", "name": "E-Signature", "unit_price_monthly": 8.0, "capabilities": ["esign"]}
+      ],
+      "keywords": ["pdf", "acrobat", "document", "sign", "signature"]
+    }
+  ],
+  "incentives": [
+    {
+      "id": "adobe-vol",
+      "vendor_id": "adobe",
+      "type": "volume_rebate",
+      "description": "Volume rebate at 100+ seats",
+      "discount_pct": 0.10,
+      "min_annual_usd": 50000,
+      "min_seats": 100
+    }
+  ],
+  "knowledge": [
+    {"source": "Adobe — Creative Suite datasheet (illustrative)", "snippet": "Creative Suite (illustrative) includes design and video editing tools, licensed per named user on an annual term."},
+    {"source": "Adobe — Document Cloud datasheet (illustrative)", "snippet": "Document Cloud (illustrative) provides PDF creation and editing; electronic signature is an optional add-on covering the esign capability."}
+  ]
+}

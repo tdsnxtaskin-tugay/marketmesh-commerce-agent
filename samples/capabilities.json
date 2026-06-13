@@ -1,0 +1,20 @@
+{
+  "ontology": "software-commerce",
+  "note": "Capability vocabulary for the multi-vendor product ontology (Fabric IQ).",
+  "capabilities": [
+    {"id": "design", "name": "Creative design", "category": "creative"},
+    {"id": "video_edit", "name": "Video editing", "category": "creative"},
+    {"id": "pdf", "name": "PDF documents", "category": "documents"},
+    {"id": "esign", "name": "Electronic signature", "category": "documents"},
+    {"id": "office_productivity", "name": "Office productivity", "category": "productivity"},
+    {"id": "email", "name": "Business email", "category": "productivity"},
+    {"id": "collaboration", "name": "Team collaboration", "category": "productivity"},
+    {"id": "meetings", "name": "Video meetings", "category": "collaboration"},
+    {"id": "identity", "name": "Identity & SSO", "category": "security"},
+    {"id": "network_security", "name": "Network security", "category": "security"},
+    {"id": "endpoint_security", "name": "Endpoint security", "category": "security"},
+    {"id": "vpn", "name": "VPN / secure access", "category": "security"},
+    {"id": "analytics", "name": "Workplace analytics", "category": "data"},
+    {"id": "crm", "name": "Customer relationship management", "category": "business"}
+  ]
+}

@@ -1,0 +1,15 @@
+# Core runtime has ZERO hard dependencies — the offline demo runs on the stdlib.
+# The packages below are optional and only activate the live Microsoft IQ / LLM
+# paths. Everything degrades gracefully when they are absent.
+
+python-dotenv>=1.0.0
+
+# ── Optional: live Microsoft IQ + LLM integrations ──
+# openai>=1.30.0            # Azure OpenAI reasoning narration
+# azure-ai-projects>=1.0.0  # Foundry IQ grounded retrieval
+# azure-identity>=1.17.0    # Entra ID auth for Foundry IQ / Work IQ
+# requests>=2.31.0          # Microsoft Graph (Work IQ) + Fabric IQ REST
+
+# ── Dev / CI ──
+pytest>=8.0.0
+ruff>=0.5.0

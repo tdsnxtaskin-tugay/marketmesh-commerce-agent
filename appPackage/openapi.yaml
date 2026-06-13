@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: MarketMesh Commerce API
+  description: >
+    Backend actions for the MarketMesh Microsoft 365 Copilot declarative agent.
+    All vendor and pricing data is synthetic/illustrative. Checkout runs in DRY_RUN —
+    no real payment is captured. In production this API is fronted by Microsoft Entra
+    ID (OAuth 2.0) and least-privilege scopes.
+  version: 1.0.0
+servers:
+  - url: https://YOUR-MARKETMESH-HOST/api
+    description: Replace with your hosted backend (e.g. Azure Container Apps / App Service)
+paths:
+  /vendors/register:
+    post:
+      operationId: registerVendor
+      summary: Register a new vendor and its products.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vendor"
+      responses:
+        "200":
+          description: Vendor registered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vendor"
+  /search:
+    get:
+      operationId: searchProducts
+      summary: Search products across all registered vendors.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema: { type: string }
+        - name: capability
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: Matching products.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items: { $ref: "#/components/schemas/ProductHit" }
+  /deals/optimize:
+    post:
+      operationId: optimizeDeal
+      summary: Optimise a cross-vendor deal for a set of required capabilities.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [required_capabilities]
+              properties:
+                required_capabilities:
+                  type: array
+                  items: { type: string }
+                seats: { type: integer }
+                term_months: { type: integer, default: 12 }
+      responses:
+        "200":
+          description: A priced, incentive-aware quote.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quote"
+  /deals/checkout:
+    post:
+      operationId: checkoutDeal
+      summary: Place a human-approved, idempotent, DRY_RUN order for a quote.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quote_fingerprint, approval_token]
+              properties:
+                quote_fingerprint: { type: string }
+                approval_token: { type: string }
+                idempotency_key: { type: string }
+      responses:
+        "200":
+          description: The placed (simulated) order.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+components:
+  schemas:
+    Vendor:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        is_real_brand: { type: boolean }
+        disclaimer: { type: string }
+        products:
+          type: array
+          items: { type: object }
+    ProductHit:
+      type: object
+      properties:
+        sku_id: { type: string }
+        name: { type: string }
+        vendor_name: { type: string }
+        capabilities:
+          type: array
+          items: { type: string }
+    Quote:
+      type: object
+      properties:
+        summary: { type: string }
+        currency: { type: string }
+        list_total_annual_usd: { type: number }
+        total_incentive_usd: { type: number }
+        net_total_annual_usd: { type: number }
+        lines:
+          type: array
+          items: { type: object }
+    Order:
+      type: object
+      properties:
+        id: { type: string }
+        status: { type: string }
+        annual_usd: { type: number }
+        approver: { type: string }

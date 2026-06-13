@@ -1,0 +1,63 @@
+{
+  "id": "microsoft",
+  "name": "Microsoft",
+  "is_real_brand": true,
+  "disclaimer": "Illustrative demo data only — not official Microsoft pricing, specifications, or an endorsement.",
+  "products": [
+    {
+      "id": "ms-productivity",
+      "vendor_id": "microsoft",
+      "name": "Productivity Suite (illustrative)",
+      "family": "Productivity",
+      "category_code": "43232106",
+      "pricing_model": "per_seat",
+      "unit_price_monthly": 36.0,
+      "min_seats": 1,
+      "max_seats": 100000,
+      "term_months": 12,
+      "capabilities": ["office_productivity", "email", "collaboration"],
+      "add_ons": [
+        {"id": "identity-premium", "name": "Identity Premium", "unit_price_monthly": 7.0, "capabilities": ["identity"]},
+        {"id": "workplace-analytics", "name": "Workplace Analytics", "unit_price_monthly": 12.0, "capabilities": ["analytics"]}
+      ],
+      "keywords": ["office", "word", "excel", "email", "outlook", "teams", "collaboration", "productivity"]
+    },
+    {
+      "id": "ms-meet",
+      "vendor_id": "microsoft",
+      "name": "Meet Basic (illustrative)",
+      "family": "Collaboration",
+      "category_code": "43232202",
+      "pricing_model": "per_seat",
+      "unit_price_monthly": 8.0,
+      "min_seats": 1,
+      "max_seats": 100000,
+      "term_months": 12,
+      "capabilities": ["meetings"],
+      "add_ons": [],
+      "keywords": ["meetings", "video", "teams", "conferencing"]
+    }
+  ],
+  "incentives": [
+    {
+      "id": "ms-mdf",
+      "vendor_id": "microsoft",
+      "type": "mdf",
+      "description": "Market Development Funds co-marketing credit",
+      "discount_pct": 0.08,
+      "min_annual_usd": 40000
+    },
+    {
+      "id": "ms-bundle",
+      "vendor_id": "microsoft",
+      "type": "bundle",
+      "description": "Attach discount when bought alongside a creative suite",
+      "discount_pct": 0.05,
+      "requires_vendor_ids": ["adobe"]
+    }
+  ],
+  "knowledge": [
+    {"source": "Microsoft — Productivity Suite datasheet (illustrative)", "snippet": "Productivity Suite (illustrative) covers office productivity, email and collaboration; identity (SSO) and workplace analytics are optional add-ons."},
+    {"source": "Microsoft — Identity Premium datasheet (illustrative)", "snippet": "Identity Premium (illustrative) add-on provides single sign-on and conditional access, satisfying the identity capability."}
+  ]
+}

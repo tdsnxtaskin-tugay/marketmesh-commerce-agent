@@ -1,0 +1,74 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.1/schema.json",
+  "schema_version": "v2.1",
+  "name_for_human": "MarketMesh Commerce",
+  "description_for_human": "Search vendors, optimise cross-vendor software deals, and run human-approved, simulated checkout.",
+  "namespace": "marketmesh",
+  "functions": [
+    {
+      "name": "registerVendor",
+      "description": "Register a new software vendor and its products so they can participate in deals.",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$",
+          "properties": { "title": "$.name" }
+        }
+      }
+    },
+    {
+      "name": "searchProducts",
+      "description": "Search products across every registered vendor by keywords or capability.",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$.results",
+          "properties": { "title": "$.name", "subtitle": "$.vendor_name" }
+        }
+      }
+    },
+    {
+      "name": "optimizeDeal",
+      "description": "Assemble the cheapest cross-vendor set of products that covers the required capabilities, applying marketing/co-sell/volume incentives, and return a priced quote with savings.",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$",
+          "properties": { "title": "$.summary" }
+        }
+      }
+    },
+    {
+      "name": "checkoutDeal",
+      "description": "Place a human-approved, idempotent, DRY_RUN order for a previously optimised quote. Requires an approval token.",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$",
+          "properties": { "title": "$.id", "subtitle": "$.status" }
+        }
+      }
+    }
+  ],
+  "runtimes": [
+    {
+      "type": "OpenApi",
+      "auth": {
+        "type": "OAuthPluginVault",
+        "reference_id": "${{OAUTH2_CONFIGURATION_ID}}"
+      },
+      "spec": {
+        "url": "openapi.yaml"
+      },
+      "run_for_functions": [
+        "registerVendor",
+        "searchProducts",
+        "optimizeDeal",
+        "checkoutDeal"
+      ]
+    }
+  ],
+  "capabilities": {
+    "conversation_starters": [
+      {
+        "text": "We need a secure creative + productivity stack for 200 people — what should we buy across vendors?"
+      }
+    ]
+  }
+}

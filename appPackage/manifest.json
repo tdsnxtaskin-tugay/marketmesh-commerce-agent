@@ -1,0 +1,35 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.19/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.19",
+  "version": "1.0.0",
+  "id": "${{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "MarketMesh (hackathon project)",
+    "websiteUrl": "https://github.com/tdsnxtaskin-tugay/marketmesh-commerce-agent",
+    "privacyUrl": "https://github.com/tdsnxtaskin-tugay/marketmesh-commerce-agent/blob/main/README.md",
+    "termsOfUseUrl": "https://github.com/tdsnxtaskin-tugay/marketmesh-commerce-agent/blob/main/LICENSE"
+  },
+  "name": {
+    "short": "MarketMesh",
+    "full": "MarketMesh — Multi-Vendor Software Commerce"
+  },
+  "description": {
+    "short": "Agentic multi-vendor software commerce, grounded by Microsoft IQ.",
+    "full": "MarketMesh registers any software vendor, makes products searchable and configurable, and assembles cost-optimised, incentive-aware, human-approved cross-vendor deals. Grounded by Work IQ (buyer signals), Fabric IQ (product ontology) and Foundry IQ (grounded retrieval). All data is synthetic; checkout runs in DRY_RUN."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#2A6DF4",
+  "copilotAgents": {
+    "declarativeAgents": [
+      {
+        "id": "marketmesh",
+        "file": "declarativeAgent.json"
+      }
+    ]
+  },
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": []
+}

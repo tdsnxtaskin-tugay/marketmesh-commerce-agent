@@ -1,0 +1,53 @@
+{
+  "id": "cisco",
+  "name": "Cisco",
+  "is_real_brand": true,
+  "disclaimer": "Illustrative demo data only — not official Cisco pricing, specifications, or an endorsement.",
+  "products": [
+    {
+      "id": "cisco-secure",
+      "vendor_id": "cisco",
+      "name": "Secure Connect (illustrative)",
+      "family": "Security",
+      "category_code": "43233205",
+      "pricing_model": "per_seat",
+      "unit_price_monthly": 18.0,
+      "min_seats": 1,
+      "max_seats": 100000,
+      "term_months": 12,
+      "capabilities": ["network_security", "vpn", "endpoint_security"],
+      "add_ons": [],
+      "keywords": ["security", "vpn", "firewall", "zero", "trust", "network", "endpoint"]
+    },
+    {
+      "id": "cisco-webex",
+      "vendor_id": "cisco",
+      "name": "Webex Meet (illustrative)",
+      "family": "Collaboration",
+      "category_code": "43232202",
+      "pricing_model": "per_seat",
+      "unit_price_monthly": 14.0,
+      "min_seats": 1,
+      "max_seats": 100000,
+      "term_months": 12,
+      "capabilities": ["meetings"],
+      "add_ons": [],
+      "keywords": ["meetings", "video", "conferencing", "webex"]
+    }
+  ],
+  "incentives": [
+    {
+      "id": "cisco-cosell",
+      "vendor_id": "cisco",
+      "type": "co_sell",
+      "description": "Cross-vendor co-sell discount when paired with a productivity suite",
+      "discount_pct": 0.12,
+      "min_annual_usd": 20000,
+      "requires_vendor_ids": ["microsoft"]
+    }
+  ],
+  "knowledge": [
+    {"source": "Cisco — Secure Connect datasheet (illustrative)", "snippet": "Secure Connect (illustrative) bundles zero-trust network access, VPN and endpoint security, licensed per user annually."},
+    {"source": "Cisco — Webex Meet datasheet (illustrative)", "snippet": "Webex Meet (illustrative) provides video meetings and webinars, licensed per host."}
+  ]
+}

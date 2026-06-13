@@ -1,0 +1,15 @@
+{
+  "department": "Creative & Digital",
+  "requested_seats": 200,
+  "renewal_subject": "Creative Cloud renewal + new secure collaboration stack",
+  "renewal_date": "2026-07-15",
+  "approval_threshold_usd": 50000,
+  "approver": "procurement.lead@example.com",
+  "budget_annual_usd": 900000,
+  "signals": [
+    {"kind": "email", "summary": "Creative Cloud renews 2026-07-15 for the 200-person design team."},
+    {"kind": "chat", "summary": "Design lead asked for 200 seats plus secure remote access and e-signature."},
+    {"kind": "meeting", "summary": "Finance: any purchase over $50k/yr needs procurement approval."},
+    {"kind": "document", "summary": "IT standard: SSO / identity is mandatory for every new SaaS purchase."}
+  ]
+}
